@@ -1,6 +1,6 @@
 package main
 
-import "3dsqr/cmd"
+import "github.com/luclu7/3dsqr/cmd"
 
 func main() {
 	cmd.Execute()
