@@ -1,14 +1,16 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"github.com/Baozisoftware/qrcode-terminal-go"
 	"log"
 	"net"
 	"net/http"
 	"os"
 	"regexp"
 	"strings"
+
+	qrcodeTerminal "github.com/Baozisoftware/qrcode-terminal-go"
 )
 
 func GetOutboundIP() net.IP {
@@ -24,6 +26,7 @@ func GetOutboundIP() net.IP {
 }
 
 func main() {
+	port := flag.String("port", "8080", "port to listen on (1-65536)")
 	argsWithoutProg := os.Args[1:]
 	fileInput := strings.Join(argsWithoutProg, " ")
 	match, _ := regexp.MatchString(".cia$", fileInput)
@@ -44,6 +47,6 @@ func main() {
 	}
 	http.Handle("/", http.FileServer(http.Dir(dir)))
 	log.Printf("Serving your CIA at: " + content)
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	log.Fatal(http.ListenAndServe(":"+*port, nil))
 
 }
