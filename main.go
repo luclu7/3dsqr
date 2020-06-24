@@ -6,6 +6,7 @@ import (
 	"log"
 	"net"
 	"net/http"
+	"net/url"
 	"os"
 	"regexp"
 	"strings"
@@ -38,15 +39,19 @@ func main() {
 
 	ip := GetOutboundIP()
 	ipString := ip.String()
-	content := "http://" + ipString + ":8000/" + fileInput
+	url, err := url.Parse("http://" + ipString + ":" + *port + "/")
+	if err != nil {
+		log.Fatal(err)
+	}
+	url.Path += fileInput
 	obj := qrcodeTerminal.New()
-	obj.Get([]byte(content)).Print()
+	obj.Get(url.String()).Print()
 	dir, err := os.Getwd()
 	if err != nil {
 		log.Fatal(err)
 	}
 	http.Handle("/", http.FileServer(http.Dir(dir)))
-	log.Printf("Serving your CIA at: " + content)
+	log.Printf("%s\n", "Serving your CIA at: "+url.String())
 	log.Fatal(http.ListenAndServe(":"+*port, nil))
 
 }
